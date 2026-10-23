@@ -2,6 +2,9 @@ package com.langualaxy.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -11,9 +14,12 @@ public class Question {
 
     private String text;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id")
     private Test test;
+
+    @OneToMany(mappedBy = "question")
+    private List<TestOption> options = new ArrayList<>();
 
     public Long getId() {
         return id;

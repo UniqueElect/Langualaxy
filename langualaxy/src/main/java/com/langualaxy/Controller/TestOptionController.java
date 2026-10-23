@@ -1,5 +1,6 @@
 package com.langualaxy.Controller;
 
+import com.langualaxy.Dtos.TestOptionDTO;
 import com.langualaxy.Entity.TestOption;
 import com.langualaxy.Service.TestOptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class TestOptionController {
         return new ResponseEntity<>(createdTestOption, HttpStatus.CREATED);
     }
     @GetMapping("/all")
-    public ResponseEntity<List<TestOption>> getAllTestOptions() {
-        List<TestOption> testOptions = testOptionService.getAllTestOptions();
+    public ResponseEntity<List<TestOptionDTO>> getAllTestOptions() {
+        List<TestOptionDTO> testOptions = testOptionService.getAllTestOptions();
         return new ResponseEntity<>(testOptions, HttpStatus.OK);
     }
     @GetMapping("get/{testOptionId}")

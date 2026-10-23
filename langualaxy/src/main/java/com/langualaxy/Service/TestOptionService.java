@@ -1,5 +1,6 @@
 package com.langualaxy.Service;
 
+import com.langualaxy.Dtos.TestOptionDTO;
 import com.langualaxy.Entity.TestOption;
 import com.langualaxy.Repository.TestOptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,9 @@ public class TestOptionService {
     public TestOption createTestOption(TestOption testOption) {
         return testOptionRepository.save(testOption);
     }
-    public List<TestOption> getAllTestOptions() {
-        return testOptionRepository.findAll();
+    public List<TestOptionDTO> getAllTestOptions() {
+        return testOptionRepository.findAll().stream()
+                .map(o -> new TestOptionDTO(o.getId(), o.getText(), o.getQuestion().getId())).toList();
     }
     public Optional<TestOption> getTestOptionById(Long testOptionId) {
         return testOptionRepository.findById(testOptionId);
