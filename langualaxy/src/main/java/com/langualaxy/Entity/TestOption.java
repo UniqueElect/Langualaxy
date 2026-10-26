@@ -1,9 +1,11 @@
     package com.langualaxy.Entity;
 
     import jakarta.persistence.*;
-    import lombok.Data;
+    import lombok.Getter;
+    import lombok.Setter;
 
-    @Data
+    @Getter
+    @Setter
     @Entity
     @Table(name = "test_options")
     public class TestOption {

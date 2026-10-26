@@ -1,11 +1,15 @@
 package com.langualaxy.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-@Data
+
+@Getter
+@Setter
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -19,6 +23,7 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "question")
     private List<TestOption> options = new ArrayList<>();
 
