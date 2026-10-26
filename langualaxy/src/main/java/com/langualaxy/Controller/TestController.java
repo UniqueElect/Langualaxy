@@ -1,6 +1,6 @@
 package com.langualaxy.Controller;
 
-import com.langualaxy.Entity.Question;
+import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Entity.Test;
 import com.langualaxy.Request.TestCreationRequest;
 import com.langualaxy.Service.TestService;
@@ -50,8 +50,8 @@ public class TestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
   @GetMapping("/{testId}/start")
-    public ResponseEntity<List<Question>> startTest(@PathVariable Long testId) {
-        List<Question> selectedQuestions = testService.selectRandomQuestions(testId, 10);
+    public ResponseEntity<List<QuestionDTO>> startTest(@PathVariable Long testId) {
+        List<QuestionDTO> selectedQuestions = testService.startTest(testId, 10);
         if (selectedQuestions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {

@@ -1,5 +1,7 @@
 package com.langualaxy.Service;
 
+import com.langualaxy.Dtos.QuestionDTO;
+import com.langualaxy.Dtos.TestOptionDTO;
 import com.langualaxy.Entity.Question;
 import com.langualaxy.Entity.Test;
 import com.langualaxy.Entity.TestOption;
@@ -11,8 +13,13 @@ import com.langualaxy.Request.QuestionRequest;
 import com.langualaxy.Request.TestCreationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TestService {
@@ -48,15 +55,18 @@ public class TestService {
 
         return test;
     }
-//    public Test createTest(Test test) {
+
+    //    public Test createTest(Test test) {
 //        return testRepository.save(test);
 //    }
     public List<Test> getAllTests() {
         return testRepository.findAll();
     }
+
     public Optional<Test> getTestById(Long testId) {
         return testRepository.findById(testId);
     }
+
     public Test updateTest(Long testId, Test updatedTest) {
         Optional<Test> existingTestOptional = testRepository.findById(testId);
         if (existingTestOptional.isPresent()) {
@@ -67,24 +77,31 @@ public class TestService {
             return null;
         }
     }
+
     public void deleteTest(Long testId) {
         testRepository.deleteById(testId);
     }
-    public List<Question> selectRandomQuestions(Long testId, int numQuestions) {
+
+    public List<Question> selectRandomQuestions(List<Question> questions, int numQuestions) {
+        var copy = new ArrayList<>(questions);
+        Collections.shuffle(copy);
+        return copy.subList(0, Math.min(copy.size(), numQuestions));
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuestionDTO> startTest(Long testId, int numQuestions) {
         List<Question> allQuestionsForTest = questionRepository.findByTestId(testId);
         if (allQuestionsForTest.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Question> copyQuestions = new ArrayList<>(allQuestionsForTest);
-        List<Question> selectedQuestions = new ArrayList<>();
-        Random random = new Random();
-        while (!copyQuestions.isEmpty() && selectedQuestions.size() < numQuestions) {
-            int randomIndex = random.nextInt(copyQuestions.size());
-            selectedQuestions.add(copyQuestions.get(randomIndex));
-            copyQuestions.remove(randomIndex);
-        }
-        return selectedQuestions;
-    }
+        List<Question> selectedQuestions = selectRandomQuestions(allQuestionsForTest, numQuestions);
+        var optionsByQuestionId = testOptionRepository.
+                findByQuestionIdIn(selectedQuestions.stream().map(Question::getId).toList()).stream()
+                .collect(Collectors.groupingBy(o -> o.getQuestion().getId()));
 
+        return selectedQuestions.stream().map(q -> new QuestionDTO(q.getId(), q.getText(),
+                optionsByQuestionId.getOrDefault(q.getId(), List.of()).stream()
+                        .map(o -> new TestOptionDTO(o.getId(), o.getText())).toList())).toList();
+    }
 }
 

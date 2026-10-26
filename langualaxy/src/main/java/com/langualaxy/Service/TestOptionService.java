@@ -19,7 +19,7 @@ public class TestOptionService {
     }
     public List<TestOptionDTO> getAllTestOptions() {
         return testOptionRepository.findAll().stream()
-                .map(o -> new TestOptionDTO(o.getId(), o.getText(), o.getQuestion().getId())).toList();
+                .map(o -> new TestOptionDTO(o.getId(), o.getText())).toList();
     }
     public Optional<TestOption> getTestOptionById(Long testOptionId) {
         return testOptionRepository.findById(testOptionId);

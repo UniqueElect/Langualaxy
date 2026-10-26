@@ -1,4 +1,7 @@
 package com.langualaxy.Dtos;
 
-public record QuestionDTO() {
+
+import java.util.List;
+
+public record QuestionDTO(Long id, String text, List<TestOptionDTO> options) {
 }
