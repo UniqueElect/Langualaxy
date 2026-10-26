@@ -56,26 +56,14 @@
           .then(data => {
             console.log('Received questions:', data);
             if (Array.isArray(data) && data.length > 0) {
-              this.questions = data; 
+              this.questions = data;
               this.currentQuestion = this.questions[0];
-              this.fetchOptionsForQuestion(this.currentQuestion.id); 
             } else {
               console.error('No questions available for the test');
             }
           })
           .catch(error => {
             console.error('Error at the start of the test:', error);
-          });
-      },
-      fetchOptionsForQuestion(questionId) {
-        fetch(`http://localhost:8080/api/test-options/question/${questionId}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log('Received answer options for the question:', data);
-            this.currentQuestion.options = data;
-          })
-          .catch(error => {
-            console.error('Error fetching answer options:', error);
           });
       },
       selectOption(option) {
@@ -97,7 +85,6 @@
         const currentIndex = this.questions.indexOf(this.currentQuestion);
         if (currentIndex !== -1 && currentIndex < this.questions.length - 1) {
           this.currentQuestion = this.questions[currentIndex + 1];
-          this.fetchOptionsForQuestion(this.currentQuestion.id);
         } else {
           console.warn('Failed to proceed to the next question');
           this.testFinished = true; 
