@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tests")
@@ -24,32 +23,33 @@ public class TestController {
         Test createdTest = testService.createTest(testCreationRequest);
         return new ResponseEntity<>(createdTest, HttpStatus.CREATED);
     }
+
     @GetMapping("all")
     public ResponseEntity<List<Test>> getAllTests() {
         List<Test> tests = testService.getAllTests();
         return new ResponseEntity<>(tests, HttpStatus.OK);
     }
+
     @GetMapping("get/{testId}")
     public ResponseEntity<Test> getTestById(@PathVariable Long testId) {
-        Optional<Test> test = testService.getTestById(testId);
-        return test.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Test test = testService.getTestById(testId);
+        return new ResponseEntity<>(test, HttpStatus.OK);
     }
+
     @PostMapping("edit/{testId}")
     public ResponseEntity<Test> updateTest(@PathVariable Long testId, @RequestBody Test updatedTest) {
         Test test = testService.updateTest(testId, updatedTest);
-        if (test != null) {
-            return new ResponseEntity<>(test, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(test, HttpStatus.OK);
+
     }
+
     @GetMapping("delete/{testId}")
     public ResponseEntity<Void> deleteTest(@PathVariable Long testId) {
         testService.deleteTest(testId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-  @GetMapping("/{testId}/start")
+
+    @GetMapping("/{testId}/start")
     public ResponseEntity<List<QuestionDTO>> startTest(@PathVariable Long testId) {
         List<QuestionDTO> selectedQuestions = testService.startTest(testId, 10);
         if (selectedQuestions.isEmpty()) {

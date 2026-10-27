@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -29,9 +28,8 @@ public class QuestionController {
     }
     @GetMapping("get/{questionId}")
     public ResponseEntity<Question> getQuestionById(@PathVariable Long questionId) {
-        Optional<Question> question = questionService.getQuestionById(questionId);
-        return question.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+       Question question = questionService.getQuestionById(questionId);
+        return new ResponseEntity<>(question, HttpStatus.OK);
     }
     @PostMapping("edit/{questionId}")
     public ResponseEntity<Question> updateQuestion(@PathVariable Long questionId, @RequestBody Question updatedQuestion) {

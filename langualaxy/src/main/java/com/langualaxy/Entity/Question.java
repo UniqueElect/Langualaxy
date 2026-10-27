@@ -1,6 +1,5 @@
 package com.langualaxy.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,6 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "question")
     private List<TestOption> options = new ArrayList<>();
 

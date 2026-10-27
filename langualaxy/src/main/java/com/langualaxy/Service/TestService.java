@@ -5,6 +5,7 @@ import com.langualaxy.Dtos.TestOptionDTO;
 import com.langualaxy.Entity.Question;
 import com.langualaxy.Entity.Test;
 import com.langualaxy.Entity.TestOption;
+import com.langualaxy.Exceptions.NotFoundException;
 import com.langualaxy.Repository.QuestionRepository;
 import com.langualaxy.Repository.TestOptionRepository;
 import com.langualaxy.Repository.TestRepository;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,19 +63,16 @@ public class TestService {
         return testRepository.findAll();
     }
 
-    public Optional<Test> getTestById(Long testId) {
-        return testRepository.findById(testId);
+    public Test getTestById(Long testId) {
+        return testRepository.findById(testId)
+                .orElseThrow(() -> new NotFoundException("Test", testId));
     }
 
     public Test updateTest(Long testId, Test updatedTest) {
-        Optional<Test> existingTestOptional = testRepository.findById(testId);
-        if (existingTestOptional.isPresent()) {
-            Test existingTest = existingTestOptional.get();
-            existingTest.setTitle(updatedTest.getTitle());
-            return testRepository.save(existingTest);
-        } else {
-            return null;
-        }
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new NotFoundException("Test", testId));
+        test.setTitle(updatedTest.getTitle());
+        return testRepository.save(test);
     }
 
     public void deleteTest(Long testId) {
