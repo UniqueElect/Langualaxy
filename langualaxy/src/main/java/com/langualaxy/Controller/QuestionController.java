@@ -21,16 +21,19 @@ public class QuestionController {
         Question createdQuestion = questionService.createQuestion(question);
         return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);
     }
+
     @GetMapping("/all")
     public ResponseEntity<List<Question>> getAllQuestions() {
         List<Question> questions = questionService.getAllQuestions();
         return new ResponseEntity<>(questions, HttpStatus.OK);
     }
+
     @GetMapping("get/{questionId}")
     public ResponseEntity<Question> getQuestionById(@PathVariable Long questionId) {
-       Question question = questionService.getQuestionById(questionId);
+        Question question = questionService.getQuestionById(questionId);
         return new ResponseEntity<>(question, HttpStatus.OK);
     }
+
     @PostMapping("edit/{questionId}")
     public ResponseEntity<Question> updateQuestion(@PathVariable Long questionId, @RequestBody Question updatedQuestion) {
         Question question = questionService.updateQuestion(questionId, updatedQuestion);
@@ -40,6 +43,7 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("delete/{questionId}")
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long questionId) {
         questionService.deleteQuestion(questionId);
