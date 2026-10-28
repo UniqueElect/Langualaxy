@@ -56,9 +56,6 @@ public class TestService {
         return test;
     }
 
-    //    public Test createTest(Test test) {
-//        return testRepository.save(test);
-//    }
     public List<Test> getAllTests() {
         return testRepository.findAll();
     }

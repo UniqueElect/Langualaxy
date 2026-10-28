@@ -1,5 +1,6 @@
 package com.langualaxy.Controller;
 
+import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Entity.Question;
 import com.langualaxy.Service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,26 +18,26 @@ public class QuestionController {
     private QuestionService questionService;
 
     @PostMapping("")
-    public ResponseEntity<Question> createQuestion(@RequestBody Question question) {
-        Question createdQuestion = questionService.createQuestion(question);
+    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody Question question) {
+        QuestionDTO createdQuestion = questionService.createQuestion(question);
         return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Question>> getAllQuestions() {
-        List<Question> questions = questionService.getAllQuestions();
+    public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
+        List<QuestionDTO> questions = questionService.getAllQuestions();
         return new ResponseEntity<>(questions, HttpStatus.OK);
     }
 
     @GetMapping("get/{questionId}")
-    public ResponseEntity<Question> getQuestionById(@PathVariable Long questionId) {
-        Question question = questionService.getQuestionById(questionId);
+    public ResponseEntity<QuestionDTO> getQuestionById(@PathVariable Long questionId) {
+        QuestionDTO question = questionService.getQuestionById(questionId);
         return new ResponseEntity<>(question, HttpStatus.OK);
     }
 
     @PostMapping("edit/{questionId}")
-    public ResponseEntity<Question> updateQuestion(@PathVariable Long questionId, @RequestBody Question updatedQuestion) {
-        Question question = questionService.updateQuestion(questionId, updatedQuestion);
+    public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @RequestBody Question updatedQuestion) {
+        QuestionDTO question = questionService.updateQuestion(questionId, updatedQuestion);
         if (question != null) {
             return new ResponseEntity<>(question, HttpStatus.OK);
         } else {

@@ -18,8 +18,8 @@ public class TestOptionController {
     private TestOptionService testOptionService;
 
     @PostMapping("")
-    public ResponseEntity<TestOption> createTestOption(@RequestBody TestOption testOption) {
-        TestOption createdTestOption = testOptionService.createTestOption(testOption);
+    public ResponseEntity<TestOptionDTO> createTestOption(@RequestBody TestOption testOption) {
+        TestOptionDTO createdTestOption = testOptionService.createTestOption(testOption);
         return new ResponseEntity<>(createdTestOption, HttpStatus.CREATED);
     }
 
@@ -30,14 +30,14 @@ public class TestOptionController {
     }
 
     @GetMapping("get/{testOptionId}")
-    public ResponseEntity<TestOption> getTestOptionById(@PathVariable Long testOptionId) {
-        TestOption testOption = testOptionService.getTestOptionById(testOptionId);
+    public ResponseEntity<TestOptionDTO> getTestOptionById(@PathVariable Long testOptionId) {
+        TestOptionDTO testOption = testOptionService.getTestOptionById(testOptionId);
         return new ResponseEntity<>(testOption, HttpStatus.OK);
     }
 
     @PostMapping("edit/{testOptionId}")
-    public ResponseEntity<TestOption> updateTestOption(@PathVariable Long testOptionId, @RequestBody TestOption updatedTestOption) {
-        TestOption testOption = testOptionService.updateTestOption(testOptionId, updatedTestOption);
+    public ResponseEntity<TestOptionDTO> updateTestOption(@PathVariable Long testOptionId, @RequestBody TestOption updatedTestOption) {
+        TestOptionDTO testOption = testOptionService.updateTestOption(testOptionId, updatedTestOption);
         return new ResponseEntity<>(testOption, HttpStatus.OK);
 
     }
@@ -49,8 +49,8 @@ public class TestOptionController {
     }
 
     @GetMapping("/question/{questionId}")
-    public ResponseEntity<List<TestOption>> getAllTestOptionsByQuestionId(@PathVariable Long questionId) {
-        List<TestOption> testOptions = testOptionService.getAllTestOptionsByQuestionId(questionId);
+    public ResponseEntity<List<TestOptionDTO>> getAllTestOptionsByQuestionId(@PathVariable Long questionId) {
+        List<TestOptionDTO> testOptions = testOptionService.getAllTestOptionsByQuestionId(questionId);
         return new ResponseEntity<>(testOptions, HttpStatus.OK);
     }
 }
