@@ -12,7 +12,6 @@ import com.langualaxy.Repository.TestRepository;
 import com.langualaxy.Request.OptionRequest;
 import com.langualaxy.Request.QuestionRequest;
 import com.langualaxy.Request.TestCreationRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +22,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class TestService {
-    @Autowired
-    private TestRepository testRepository;
+    private final TestRepository testRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
 
-    @Autowired
-    private TestOptionRepository testOptionRepository;
+    private final TestOptionRepository testOptionRepository;
 
+    public TestService(TestRepository testRepository,
+                       QuestionRepository questionRepository, TestOptionRepository testOptionRepository) {
+        this.testRepository = testRepository;
+        this.testOptionRepository = testOptionRepository;
+        this.questionRepository = questionRepository;
+    }
+
+    @Transactional
     public Test createTest(TestCreationRequest testCreationRequest) {
         Test test = new Test();
         test.setTitle(testCreationRequest.getName());
@@ -56,15 +60,18 @@ public class TestService {
         return test;
     }
 
+    @Transactional(readOnly = true)
     public List<Test> getAllTests() {
         return testRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Test getTestById(Long testId) {
         return testRepository.findById(testId)
                 .orElseThrow(() -> new NotFoundException("Test", testId));
     }
 
+    @Transactional
     public Test updateTest(Long testId, Test updatedTest) {
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new NotFoundException("Test", testId));
@@ -72,10 +79,12 @@ public class TestService {
         return testRepository.save(test);
     }
 
+    @Transactional
     public void deleteTest(Long testId) {
         testRepository.deleteById(testId);
     }
 
+    @Transactional(readOnly = true)
     public List<Question> selectRandomQuestions(List<Question> questions, int numQuestions) {
         var copy = new ArrayList<>(questions);
         Collections.shuffle(copy);

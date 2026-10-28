@@ -38,11 +38,8 @@ public class QuestionController {
     @PostMapping("edit/{questionId}")
     public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @RequestBody Question updatedQuestion) {
         QuestionDTO question = questionService.updateQuestion(questionId, updatedQuestion);
-        if (question != null) {
-            return new ResponseEntity<>(question, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(question, HttpStatus.OK);
+
     }
 
     @GetMapping("delete/{questionId}")

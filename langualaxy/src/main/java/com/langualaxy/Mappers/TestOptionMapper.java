@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TestOptionMapper {
-    public TestOptionDTO toDTO(TestOption option){
+    public TestOptionDTO toDTO(TestOption option) {
         return new TestOptionDTO(option.getId(), option.getText());
     }
 }
