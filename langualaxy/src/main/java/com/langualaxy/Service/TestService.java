@@ -2,6 +2,7 @@ package com.langualaxy.Service;
 
 import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Dtos.TestOptionDTO;
+import com.langualaxy.Dtos.TestResult;
 import com.langualaxy.Entity.Question;
 import com.langualaxy.Entity.Test;
 import com.langualaxy.Entity.TestOption;
@@ -12,12 +13,11 @@ import com.langualaxy.Repository.TestRepository;
 import com.langualaxy.Request.OptionRequest;
 import com.langualaxy.Request.QuestionRequest;
 import com.langualaxy.Request.TestCreationRequest;
+import com.langualaxy.Request.TestSubmitRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,6 +105,21 @@ public class TestService {
         return selectedQuestions.stream().map(q -> new QuestionDTO(q.getId(), q.getText(),
                 optionsByQuestionId.getOrDefault(q.getId(), List.of()).stream()
                         .map(o -> new TestOptionDTO(o.getId(), o.getText())).toList())).toList();
+
+    }
+
+    public TestResult submitTest(Long testId, TestSubmitRequest answers){
+        Map<Long, Set<Long>> correctByQuestion = testOptionRepository.findByQuestionTestIdAndCorrectTrue(testId)
+                .stream().collect(Collectors.groupingBy(o -> o.getQuestion().getId(),
+                        Collectors.mapping(TestOption::getId, Collectors.toSet())));
+        Set<Long> correctQuestionIds = new HashSet<>();
+        for (Map.Entry<Long, Set<Long>> entry : answers.getAnswers().entrySet()) {
+                Set<Long> correct = correctByQuestion.get(entry.getKey());
+                if (correct != null && correct.equals(entry.getValue())) {
+                    correctQuestionIds.add(entry.getKey());
+                }
+        }
+        return new TestResult(correctQuestionIds);
     }
 }
 

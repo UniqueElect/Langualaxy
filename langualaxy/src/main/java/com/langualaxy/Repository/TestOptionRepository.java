@@ -8,4 +8,5 @@ import java.util.List;
 public interface TestOptionRepository extends JpaRepository<TestOption, Long> {
     List<TestOption> findByQuestionId(Long questionId);
     List<TestOption> findByQuestionIdIn(List<Long> questionIds);
+    List<TestOption> findByQuestionTestIdAndCorrectTrue(Long testId);
 }

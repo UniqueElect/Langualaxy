@@ -1,8 +1,10 @@
 package com.langualaxy.Controller;
 
 import com.langualaxy.Dtos.QuestionDTO;
+import com.langualaxy.Dtos.TestResult;
 import com.langualaxy.Entity.Test;
 import com.langualaxy.Request.TestCreationRequest;
+import com.langualaxy.Request.TestSubmitRequest;
 import com.langualaxy.Service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,10 +54,12 @@ public class TestController {
     @GetMapping("/{testId}/start")
     public ResponseEntity<List<QuestionDTO>> startTest(@PathVariable Long testId) {
         List<QuestionDTO> selectedQuestions = testService.startTest(testId, 10);
-        if (selectedQuestions.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
+    }
+
+    @PostMapping("/{testId}/submit")
+    public ResponseEntity<TestResult> submitTest(@PathVariable Long testId, @RequestBody TestSubmitRequest answers) {
+        TestResult testResult = testService.submitTest(testId, answers);
+        return new ResponseEntity<>(testResult, HttpStatus.OK);
     }
 }

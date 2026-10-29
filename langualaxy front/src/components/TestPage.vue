@@ -33,8 +33,9 @@
         currentQuestion: null,
         selectedOption: null,
         correctAnswersCount: 0,
-        questions: [], 
-        testFinished: false 
+        questions: [],
+        answers: {},
+        testFinished: false
       };
     },
     created() {
@@ -72,9 +73,8 @@
       submitAnswer() {
         console.log('Selected answer:', this.selectedOption);
         if (this.selectedOption) {
-          if (this.selectedOption.correct) {
-            this.correctAnswersCount++;
-          }
+          // key: question id, value: ids of the selected options
+          this.answers[this.currentQuestion.id] = [this.selectedOption.id];
           this.moveToNextQuestion();
           this.selectedOption = null;
         } else {
@@ -86,9 +86,30 @@
         if (currentIndex !== -1 && currentIndex < this.questions.length - 1) {
           this.currentQuestion = this.questions[currentIndex + 1];
         } else {
-          console.warn('Failed to proceed to the next question');
-          this.testFinished = true; 
+          this.submitTest();
         }
+      },
+      submitTest() {
+        fetch(`http://localhost:8080/api/tests/${this.testId}/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers: this.answers })
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Server responded with ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(result => {
+            console.log('Test result:', result);
+            this.correctAnswersCount = result.correct.length;
+            this.testFinished = true;
+          })
+          .catch(error => {
+            console.error('Error submitting the test:', error);
+            alert('Could not submit the test. Please try again.');
+          });
       },
       finishTest() {
         this.$router.push('/tests');
