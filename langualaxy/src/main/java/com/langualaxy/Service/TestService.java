@@ -93,6 +93,9 @@ public class TestService {
 
     @Transactional(readOnly = true)
     public List<QuestionDTO> startTest(Long testId, int numQuestions) {
+        if (!testRepository.existsById(testId)) {
+            throw new NotFoundException("Test", testId);
+        }
         List<Question> allQuestionsForTest = questionRepository.findByTestId(testId);
         if (allQuestionsForTest.isEmpty()) {
             return Collections.emptyList();
@@ -108,7 +111,11 @@ public class TestService {
 
     }
 
+    @Transactional(readOnly = true)
     public TestResult submitTest(Long testId, TestSubmitRequest answers){
+        if (!testRepository.existsById(testId)) {
+            throw new NotFoundException("Test", testId);
+        }
         Map<Long, Set<Long>> correctByQuestion = testOptionRepository.findByQuestionTestIdAndCorrectTrue(testId)
                 .stream().collect(Collectors.groupingBy(o -> o.getQuestion().getId(),
                         Collectors.mapping(TestOption::getId, Collectors.toSet())));
