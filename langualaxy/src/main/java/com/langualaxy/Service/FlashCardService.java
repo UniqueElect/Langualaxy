@@ -2,6 +2,7 @@ package com.langualaxy.Service;
 
 import com.langualaxy.Entity.FlashCard;
 import com.langualaxy.Entity.Theme;
+import com.langualaxy.Exceptions.NotFoundException;
 import com.langualaxy.Repository.FlashCardRepository;
 import com.langualaxy.Repository.ThemeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,17 +35,22 @@ public class FlashCardService {
     }
 
     public FlashCard getFlashCardById(Long id) {
-        return flashCardRepository.findById(id).orElse(null);
+        return flashCardRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Flashcard", id));
     }
+
     public List<FlashCard> getAllFlashcards() {
         return flashCardRepository.findAll();
     }
+
     public List<FlashCard> getFlashcardsByThemeId(Long themeId) {
         return flashCardRepository.findByTheme_Id(themeId);
     }
+
     public void updateFlashCard(FlashCard flashCard) {
         flashCardRepository.save(flashCard);
     }
+
     public void deleteFlashCard(Long id) {
         flashCardRepository.deleteById(id);
     }

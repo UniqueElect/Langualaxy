@@ -1,6 +1,7 @@
 package com.langualaxy.Service;
 
 import com.langualaxy.Entity.Theme;
+import com.langualaxy.Exceptions.NotFoundException;
 import com.langualaxy.Repository.ThemeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,8 @@ public class ThemeService {
         return themeRepository.save(theme);
     }
     public Theme getThemeById(Long id) {
-        return themeRepository.findById(id).orElse(null);
+        return themeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Theme", id));
     }
     public List<Theme> getAllThemes() {
         return themeRepository.findAll();

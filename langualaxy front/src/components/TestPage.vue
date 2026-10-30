@@ -33,8 +33,9 @@
         currentQuestion: null,
         selectedOption: null,
         correctAnswersCount: 0,
-        questions: [], 
-        testFinished: false 
+        questions: [],
+        answers: {},
+        testFinished: false
       };
     },
     created() {
@@ -56,9 +57,8 @@
           .then(data => {
             console.log('Received questions:', data);
             if (Array.isArray(data) && data.length > 0) {
-              this.questions = data; 
+              this.questions = data;
               this.currentQuestion = this.questions[0];
-              this.fetchOptionsForQuestion(this.currentQuestion.id); 
             } else {
               console.error('No questions available for the test');
             }
@@ -67,26 +67,14 @@
             console.error('Error at the start of the test:', error);
           });
       },
-      fetchOptionsForQuestion(questionId) {
-        fetch(`http://localhost:8080/api/test-options/question/${questionId}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log('Received answer options for the question:', data);
-            this.currentQuestion.options = data;
-          })
-          .catch(error => {
-            console.error('Error fetching answer options:', error);
-          });
-      },
       selectOption(option) {
         this.selectedOption = option;
       },
       submitAnswer() {
         console.log('Selected answer:', this.selectedOption);
         if (this.selectedOption) {
-          if (this.selectedOption.correct) {
-            this.correctAnswersCount++;
-          }
+          // key: question id, value: ids of the selected options
+          this.answers[this.currentQuestion.id] = [this.selectedOption.id];
           this.moveToNextQuestion();
           this.selectedOption = null;
         } else {
@@ -97,11 +85,31 @@
         const currentIndex = this.questions.indexOf(this.currentQuestion);
         if (currentIndex !== -1 && currentIndex < this.questions.length - 1) {
           this.currentQuestion = this.questions[currentIndex + 1];
-          this.fetchOptionsForQuestion(this.currentQuestion.id);
         } else {
-          console.warn('Failed to proceed to the next question');
-          this.testFinished = true; 
+          this.submitTest();
         }
+      },
+      submitTest() {
+        fetch(`http://localhost:8080/api/tests/${this.testId}/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers: this.answers })
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Server responded with ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(result => {
+            console.log('Test result:', result);
+            this.correctAnswersCount = result.correct.length;
+            this.testFinished = true;
+          })
+          .catch(error => {
+            console.error('Error submitting the test:', error);
+            alert('Could not submit the test. Please try again.');
+          });
       },
       finishTest() {
         this.$router.push('/tests');

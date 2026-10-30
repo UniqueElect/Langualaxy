@@ -1,36 +1,50 @@
 package com.langualaxy.Service;
 
+import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Entity.Question;
+import com.langualaxy.Exceptions.NotFoundException;
+import com.langualaxy.Mappers.QuestionMapper;
 import com.langualaxy.Repository.QuestionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class QuestionService {
-    @Autowired
-    private QuestionRepository questionRepository;
-    public Question createQuestion(Question question) {
-        return questionRepository.save(question);
+    private final QuestionRepository questionRepository;
+    private final QuestionMapper questionMapper;
+
+    public QuestionService(QuestionMapper questionMapper, QuestionRepository questionRepository) {
+        this.questionMapper = questionMapper;
+        this.questionRepository = questionRepository;
     }
-    public List<Question> getAllQuestions() {
-        return questionRepository.findAll();
+
+    @Transactional
+    public QuestionDTO createQuestion(Question question) {
+        return questionMapper.toDTO(questionRepository.save(question));
     }
-    public Optional<Question> getQuestionById(Long questionId) {
-        return questionRepository.findById(questionId);
+
+    @Transactional(readOnly = true)
+    public List<QuestionDTO> getAllQuestions() {
+        return questionRepository.findAllWithOptions().stream().map(questionMapper::toDTO).toList();
     }
-    public Question updateQuestion(Long questionId, Question updatedQuestion) {
-        Optional<Question> existingQuestionOptional = questionRepository.findById(questionId);
-        if (existingQuestionOptional.isPresent()) {
-            Question existingQuestion = existingQuestionOptional.get();
-            existingQuestion.setText(updatedQuestion.getText());
-            return questionRepository.save(existingQuestion);
-        } else {
-            return null;
-        }
+
+    @Transactional(readOnly = true)
+    public QuestionDTO getQuestionById(Long questionId) {
+        return questionMapper.toDTO(questionRepository.findById(questionId)
+                .orElseThrow(() -> new NotFoundException("Question", questionId)));
     }
+
+    @Transactional
+    public QuestionDTO updateQuestion(Long questionId, Question updatedQuestion) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new NotFoundException("Question", questionId));
+        question.setText(updatedQuestion.getText());
+        return questionMapper.toDTO(questionRepository.save(question));
+    }
+
+    @Transactional
     public void deleteQuestion(Long questionId) {
         questionRepository.deleteById(questionId);
     }

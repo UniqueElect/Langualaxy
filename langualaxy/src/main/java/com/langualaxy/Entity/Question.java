@@ -1,10 +1,14 @@
 package com.langualaxy.Entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -21,19 +25,4 @@ public class Question {
     @OneToMany(mappedBy = "question")
     private List<TestOption> options = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-    public String getText() {
-        return text;
-    }
-    public void setText(String text) {
-        this.text = text;
-    }
-    public Test getTest() {
-        return test;
-    }
-    public void setTest(Test test) {
-        this.test = test;
-    }
 }
