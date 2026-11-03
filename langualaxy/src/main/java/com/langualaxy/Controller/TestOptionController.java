@@ -1,7 +1,8 @@
 package com.langualaxy.Controller;
 
 import com.langualaxy.Dtos.TestOptionDTO;
-import com.langualaxy.Entity.TestOption;
+import com.langualaxy.Request.OptionCreationRequest;
+import com.langualaxy.Request.OptionUpdateRequest;
 import com.langualaxy.Service.TestOptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,8 @@ public class TestOptionController {
     private TestOptionService testOptionService;
 
     @PostMapping("")
-    public ResponseEntity<TestOptionDTO> createTestOption(@RequestBody TestOption testOption) {
-        TestOptionDTO createdTestOption = testOptionService.createTestOption(testOption);
+    public ResponseEntity<TestOptionDTO> createTestOption(@RequestBody OptionCreationRequest request) {
+        TestOptionDTO createdTestOption = testOptionService.createTestOption(request);
         return new ResponseEntity<>(createdTestOption, HttpStatus.CREATED);
     }
 
@@ -36,8 +37,9 @@ public class TestOptionController {
     }
 
     @PostMapping("edit/{testOptionId}")
-    public ResponseEntity<TestOptionDTO> updateTestOption(@PathVariable Long testOptionId, @RequestBody TestOption updatedTestOption) {
-        TestOptionDTO testOption = testOptionService.updateTestOption(testOptionId, updatedTestOption);
+    public ResponseEntity<TestOptionDTO> updateTestOption(@PathVariable Long testOptionId
+            , @RequestBody OptionUpdateRequest request) {
+        TestOptionDTO testOption = testOptionService.updateTestOption(testOptionId, request);
         return new ResponseEntity<>(testOption, HttpStatus.OK);
 
     }
