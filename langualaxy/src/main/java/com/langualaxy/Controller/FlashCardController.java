@@ -1,9 +1,10 @@
 package com.langualaxy.Controller;
 
+import com.langualaxy.Dtos.FlashCardDTO;
 import com.langualaxy.Entity.FlashCard;
-import com.langualaxy.Entity.Theme;
 import com.langualaxy.Service.FlashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,33 +20,25 @@ public class FlashCardController {
     private FlashCardService flashCardService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createFlashCard(
+    public ResponseEntity<FlashCardDTO> createFlashCard(
             @RequestParam("theme") String themeText,
             @RequestParam("word") String word,
-            @RequestParam("image") MultipartFile image) {
-        Theme theme = new Theme();
-        theme.setText(themeText);
+            @RequestParam("image") MultipartFile image) throws IOException {
         byte[] imageBytes = null;
-        if (!image.isEmpty()) {
-            try {
-                imageBytes = image.getBytes();
-            } catch (IOException e) {
-                return ResponseEntity.badRequest().body("Failed to load the image: " + e.getMessage());
-            }
-        }
-        FlashCard flashCard = flashCardService.createFlashCard(theme, word, imageBytes);
-        return ResponseEntity.ok("norm");
+        imageBytes = image.getBytes();
+        FlashCardDTO flashCard = flashCardService.createFlashCard(themeText, word, imageBytes);
+        return new ResponseEntity<>(flashCard, HttpStatus.CREATED);
     }
     @GetMapping("/{id}")
-    public FlashCard getFlashCardById(@PathVariable Long id) {
+    public FlashCardDTO getFlashCardById(@PathVariable Long id) {
         return flashCardService.getFlashCardById(id);
     }
     @GetMapping("/all")
-    public List<FlashCard> getAllFlashcards() {
+    public List<FlashCardDTO> getAllFlashcards() {
         return flashCardService.getAllFlashcards();
     }
     @GetMapping("/get/{themeId}")
-    public List<FlashCard> getFlashcardsByThemeId(@PathVariable Long themeId) {
+    public List<FlashCardDTO> getFlashcardsByThemeId(@PathVariable Long themeId) {
         return flashCardService.getFlashcardsByThemeId(themeId);
     }
     @PostMapping("edit/{id}")

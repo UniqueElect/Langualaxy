@@ -1,12 +1,14 @@
 package com.langualaxy.Service;
 
 import com.langualaxy.Dtos.QuestionDTO;
-import com.langualaxy.Dtos.TestOptionDTO;
+import com.langualaxy.Dtos.TestDTO;
 import com.langualaxy.Dtos.TestResult;
 import com.langualaxy.Entity.Question;
 import com.langualaxy.Entity.Test;
 import com.langualaxy.Entity.TestOption;
 import com.langualaxy.Exceptions.NotFoundException;
+import com.langualaxy.Mappers.QuestionMapper;
+import com.langualaxy.Mappers.TestMapper;
 import com.langualaxy.Repository.QuestionRepository;
 import com.langualaxy.Repository.TestOptionRepository;
 import com.langualaxy.Repository.TestRepository;
@@ -27,16 +29,21 @@ public class TestService {
     private final QuestionRepository questionRepository;
 
     private final TestOptionRepository testOptionRepository;
+    private final TestMapper testMapper;
+    private final QuestionMapper questionMapper;
 
     public TestService(TestRepository testRepository,
-                       QuestionRepository questionRepository, TestOptionRepository testOptionRepository) {
+                       QuestionRepository questionRepository, TestOptionRepository testOptionRepository
+            , TestMapper testMapper, QuestionMapper questionMapper) {
         this.testRepository = testRepository;
         this.testOptionRepository = testOptionRepository;
         this.questionRepository = questionRepository;
+        this.testMapper = testMapper;
+        this.questionMapper = questionMapper;
     }
 
     @Transactional
-    public Test createTest(TestCreationRequest testCreationRequest) {
+    public TestDTO createTest(TestCreationRequest testCreationRequest) {
         Test test = new Test();
         test.setTitle(testCreationRequest.getName());
 
@@ -57,26 +64,26 @@ public class TestService {
             }
         }
 
-        return test;
+        return testMapper.toDto(test);
     }
 
     @Transactional(readOnly = true)
-    public List<Test> getAllTests() {
-        return testRepository.findAll();
+    public List<TestDTO> getAllTests() {
+        return testRepository.findAll().stream().map(testMapper::toDto).toList();
     }
 
     @Transactional(readOnly = true)
-    public Test getTestById(Long testId) {
-        return testRepository.findById(testId)
+    public TestDTO getTestById(Long testId) {
+        return testRepository.findById(testId).map(testMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("Test", testId));
     }
 
     @Transactional
-    public Test updateTest(Long testId, Test updatedTest) {
+    public TestDTO updateTest(Long testId, Test updatedTest) {
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new NotFoundException("Test", testId));
         test.setTitle(updatedTest.getTitle());
-        return testRepository.save(test);
+        return testMapper.toDto(testRepository.save(test));
     }
 
     @Transactional
@@ -84,8 +91,8 @@ public class TestService {
         testRepository.deleteById(testId);
     }
 
-    @Transactional(readOnly = true)
-    public List<Question> selectRandomQuestions(List<Question> questions, int numQuestions) {
+
+    private List<Question> selectRandomQuestions(List<Question> questions, int numQuestions) {
         var copy = new ArrayList<>(questions);
         Collections.shuffle(copy);
         return copy.subList(0, Math.min(copy.size(), numQuestions));
@@ -104,11 +111,8 @@ public class TestService {
         var optionsByQuestionId = testOptionRepository.
                 findByQuestionIdIn(selectedQuestions.stream().map(Question::getId).toList()).stream()
                 .collect(Collectors.groupingBy(o -> o.getQuestion().getId()));
-
-        return selectedQuestions.stream().map(q -> new QuestionDTO(q.getId(), q.getText(),
-                optionsByQuestionId.getOrDefault(q.getId(), List.of()).stream()
-                        .map(o -> new TestOptionDTO(o.getId(), o.getText())).toList())).toList();
-
+        return selectedQuestions.stream()
+                .map(q -> questionMapper.toDTO(q, optionsByQuestionId.getOrDefault(q.getId(), List.of()))).toList();
     }
 
     @Transactional(readOnly = true)

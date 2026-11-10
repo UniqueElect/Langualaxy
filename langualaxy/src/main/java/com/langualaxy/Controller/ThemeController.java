@@ -1,5 +1,6 @@
 package com.langualaxy.Controller;
 
+import com.langualaxy.Dtos.ThemeDTO;
 import com.langualaxy.Entity.Theme;
 import com.langualaxy.Service.ThemeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,15 @@ public class ThemeController {
     private ThemeService themeService;
 
     @PostMapping
-    public Theme createTheme(@RequestBody Theme theme) {
+    public ThemeDTO createTheme(@RequestBody Theme theme) {
         return themeService.createTheme(theme.getText());
     }
     @GetMapping("/{id}")
-    public Theme getThemeById(@PathVariable Long id) {
+    public ThemeDTO getThemeById(@PathVariable Long id) {
         return themeService.getThemeById(id);
     }
     @GetMapping("/all")
-    public List<Theme> getAllThemes() {
+    public List<ThemeDTO> getAllThemes() {
         return themeService.getAllThemes();
     }
     @PostMapping("/edit/{id}")
