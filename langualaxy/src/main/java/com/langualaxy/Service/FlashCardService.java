@@ -7,7 +7,9 @@ import com.langualaxy.Exceptions.NotFoundException;
 import com.langualaxy.Mappers.FlashCardMapper;
 import com.langualaxy.Repository.FlashCardRepository;
 import com.langualaxy.Repository.ThemeRepository;
+import com.langualaxy.Request.FlashCardUpdateRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class FlashCardService {
         this.themeRepository = themeRepository;
         this.flashCardMapper = flashCardMapper;
     }
-
+    @Transactional
     public FlashCardDTO createFlashCard(String themeText, String word, byte[] image) {
         Theme flashCardTheme = themeRepository.findByText(themeText)
                 .orElseGet(() -> themeRepository.save(new Theme(themeText)));
@@ -32,27 +34,27 @@ public class FlashCardService {
         flashCard.setImage(image);
         return flashCardMapper.toDto(flashCardRepository.save(flashCard));
     }
-
+    @Transactional(readOnly = true)
     public FlashCardDTO getFlashCardById(Long id) {
         return flashCardRepository.findById(id).map(flashCardMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("Flashcard", id));
     }
-
+    @Transactional(readOnly = true)
     public List<FlashCardDTO> getAllFlashcards() {
         return flashCardRepository.findAll().stream().map(flashCardMapper::toDto).toList();
     }
-
+    @Transactional(readOnly = true)
     public List<FlashCardDTO> getFlashcardsByThemeId(Long themeId) {
         return  flashCardRepository.findByTheme_Id(themeId).stream().map(flashCardMapper::toDto).toList();
     }
-
-    public void updateFlashCard(FlashCard flashCard) {
-        FlashCard card = flashCardRepository.findById(flashCard.getId()).
-                orElseThrow(() -> new NotFoundException("Flashcard", flashCard.getId()));
-        card.setWord(flashCard.getWord());
+    @Transactional
+    public void updateFlashCard(Long id, FlashCardUpdateRequest request) {
+        FlashCard card = flashCardRepository.findById(id).
+                orElseThrow(() -> new NotFoundException("Flashcard", id));
+        card.setWord(request.word());
         flashCardRepository.save(card);
     }
-
+    @Transactional
     public void deleteFlashCard(Long id) {
         flashCardRepository.deleteById(id);
     }

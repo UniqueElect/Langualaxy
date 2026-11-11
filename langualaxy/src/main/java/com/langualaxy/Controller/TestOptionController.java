@@ -4,7 +4,6 @@ import com.langualaxy.Dtos.TestOptionDTO;
 import com.langualaxy.Request.OptionCreationRequest;
 import com.langualaxy.Request.OptionUpdateRequest;
 import com.langualaxy.Service.TestOptionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RequestMapping("/api/test-options")
 public class TestOptionController {
 
-    @Autowired
-    private TestOptionService testOptionService;
+    private final TestOptionService testOptionService;
+
+    public TestOptionController(TestOptionService testOptionService) {
+        this.testOptionService = testOptionService;
+    }
 
     @PostMapping("")
     public ResponseEntity<TestOptionDTO> createTestOption(@RequestBody OptionCreationRequest request) {

@@ -4,7 +4,6 @@ import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Request.QuestionCreationRequest;
 import com.langualaxy.Request.QuestionUpdateRequest;
 import com.langualaxy.Service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RequestMapping("/api/questions")
 public class QuestionController {
 
-    @Autowired
-    private QuestionService questionService;
+    private final QuestionService questionService;
+
+    public QuestionController(QuestionService questionService) {
+        this.questionService = questionService;
+    }
 
     @PostMapping("")
     public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionCreationRequest request) {

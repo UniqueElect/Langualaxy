@@ -7,7 +7,6 @@ import com.langualaxy.Entity.Test;
 import com.langualaxy.Request.TestCreationRequest;
 import com.langualaxy.Request.TestSubmitRequest;
 import com.langualaxy.Service.TestService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,11 @@ import java.util.List;
 @RequestMapping("/api/tests")
 public class TestController {
 
-    @Autowired
-    private TestService testService;
+    private final TestService testService;
+
+    public TestController(TestService testService) {
+        this.testService = testService;
+    }
 
     @PostMapping("")
     public ResponseEntity<TestDTO> createTest(@RequestBody TestCreationRequest testCreationRequest) {
