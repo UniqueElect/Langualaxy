@@ -3,9 +3,9 @@ package com.langualaxy.Controller;
 import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Dtos.TestDTO;
 import com.langualaxy.Dtos.TestResult;
-import com.langualaxy.Entity.Test;
 import com.langualaxy.Request.TestCreationRequest;
 import com.langualaxy.Request.TestSubmitRequest;
+import com.langualaxy.Request.TestUpdateRequest;
 import com.langualaxy.Service.TestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +42,8 @@ public class TestController {
     }
 
     @PostMapping("edit/{testId}")
-    public ResponseEntity<TestDTO> updateTest(@PathVariable Long testId, @RequestBody Test updatedTest) {
-        TestDTO test = testService.updateTest(testId, updatedTest);
+    public ResponseEntity<TestDTO> updateTest(@PathVariable Long testId, @RequestBody TestUpdateRequest request) {
+        TestDTO test = testService.updateTest(testId, request);
         return new ResponseEntity<>(test, HttpStatus.OK);
 
     }

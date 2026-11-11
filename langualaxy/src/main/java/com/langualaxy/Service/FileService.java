@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,6 +18,7 @@ public class FileService {
     public FileService(FileRepository fileRepository) {
         this.fileRepository = fileRepository;
     }
+
     @Transactional
     public void saveFile(MultipartFile file) throws IOException {
         FileEntity fileEntity = new FileEntity();
@@ -26,6 +26,7 @@ public class FileService {
         fileEntity.setData(file.getBytes());
         fileRepository.save(fileEntity);
     }
+
     @Transactional(readOnly = true)
     public FileEntity getFile(Long id) {
         return fileRepository.findById(id)
@@ -33,16 +34,18 @@ public class FileService {
     }
 
     @Transactional
-    public void renameFile(Long id, String newFileName) throws FileNotFoundException {
+    public void renameFile(Long id, String newFileName) {
         FileEntity file = fileRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("File", id));
         file.setFileName(newFileName);
         fileRepository.save(file);
     }
+
     @Transactional(readOnly = true)
     public List<FileDTO> getAllFiles() {
         return fileRepository.selectAllWithoutData();
     }
+
     @Transactional
     public void deleteFile(Long id) {
         fileRepository.deleteById(id);

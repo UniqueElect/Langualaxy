@@ -34,8 +34,8 @@ public class ThemeController {
     }
 
     @PostMapping("/edit/{id}")
-    public void updateTheme(@PathVariable Long id, @RequestBody ThemeUpdateRequest request) {
-        themeService.updateTheme(id, request);
+    public ThemeDTO updateTheme(@PathVariable Long id, @RequestBody ThemeUpdateRequest request) {
+        return themeService.updateTheme(id, request);
     }
 
     @GetMapping("/delete/{id}")

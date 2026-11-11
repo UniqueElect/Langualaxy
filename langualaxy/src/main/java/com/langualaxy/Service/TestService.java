@@ -12,10 +12,7 @@ import com.langualaxy.Mappers.TestMapper;
 import com.langualaxy.Repository.QuestionRepository;
 import com.langualaxy.Repository.TestOptionRepository;
 import com.langualaxy.Repository.TestRepository;
-import com.langualaxy.Request.OptionRequest;
-import com.langualaxy.Request.QuestionRequest;
-import com.langualaxy.Request.TestCreationRequest;
-import com.langualaxy.Request.TestSubmitRequest;
+import com.langualaxy.Request.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,10 +76,10 @@ public class TestService {
     }
 
     @Transactional
-    public TestDTO updateTest(Long testId, Test updatedTest) {
+    public TestDTO updateTest(Long testId, TestUpdateRequest request) {
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new NotFoundException("Test", testId));
-        test.setTitle(updatedTest.getTitle());
+        test.setTitle(request.title());
         return testMapper.toDto(testRepository.save(test));
     }
 
@@ -116,7 +113,7 @@ public class TestService {
     }
 
     @Transactional(readOnly = true)
-    public TestResult submitTest(Long testId, TestSubmitRequest answers){
+    public TestResult submitTest(Long testId, TestSubmitRequest answers) {
         if (!testRepository.existsById(testId)) {
             throw new NotFoundException("Test", testId);
         }
@@ -125,10 +122,10 @@ public class TestService {
                         Collectors.mapping(TestOption::getId, Collectors.toSet())));
         Set<Long> correctQuestionIds = new HashSet<>();
         for (Map.Entry<Long, Set<Long>> entry : answers.getAnswers().entrySet()) {
-                Set<Long> correct = correctByQuestion.get(entry.getKey());
-                if (correct != null && correct.equals(entry.getValue())) {
-                    correctQuestionIds.add(entry.getKey());
-                }
+            Set<Long> correct = correctByQuestion.get(entry.getKey());
+            if (correct != null && correct.equals(entry.getValue())) {
+                correctQuestionIds.add(entry.getKey());
+            }
         }
         return new TestResult(correctQuestionIds);
     }

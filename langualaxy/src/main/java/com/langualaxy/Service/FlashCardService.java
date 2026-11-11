@@ -48,11 +48,11 @@ public class FlashCardService {
         return  flashCardRepository.findByTheme_Id(themeId).stream().map(flashCardMapper::toDto).toList();
     }
     @Transactional
-    public void updateFlashCard(Long id, FlashCardUpdateRequest request) {
+    public FlashCardDTO updateFlashCard(Long id, FlashCardUpdateRequest request) {
         FlashCard card = flashCardRepository.findById(id).
                 orElseThrow(() -> new NotFoundException("Flashcard", id));
         card.setWord(request.word());
-        flashCardRepository.save(card);
+       return flashCardMapper.toDto(flashCardRepository.save(card));
     }
     @Transactional
     public void deleteFlashCard(Long id) {

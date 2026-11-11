@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
 public class FileController {
     private final FileService fileService;
 
-    public FileController(FileService fileService){
+    public FileController(FileService fileService) {
         this.fileService = fileService;
     }
 
@@ -38,14 +37,8 @@ public class FileController {
 
     @PostMapping("/rename/{id}")
     public ResponseEntity<String> renameFile(@PathVariable Long id, @RequestBody String newFileName) {
-        try {
-            fileService.renameFile(id, newFileName);
-            return ResponseEntity.ok("File name updated successfully");
-        } catch (FileNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while renaming the file");
-        }
+        fileService.renameFile(id, newFileName);
+        return ResponseEntity.ok("File name updated successfully");
     }
 
     @GetMapping("/{id}")

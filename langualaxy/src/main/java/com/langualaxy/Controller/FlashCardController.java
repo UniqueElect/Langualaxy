@@ -47,8 +47,8 @@ public class FlashCardController {
     }
 
     @PostMapping("edit/{id}")
-    public void updateFlashCard(@PathVariable Long id, @RequestBody FlashCardUpdateRequest request) {
-        flashCardService.updateFlashCard(id, request);
+    public FlashCardDTO updateFlashCard(@PathVariable Long id, @RequestBody FlashCardUpdateRequest request) {
+        return flashCardService.updateFlashCard(id, request);
     }
 
     @GetMapping("/delete/{id}")

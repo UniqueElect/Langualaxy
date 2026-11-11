@@ -37,10 +37,10 @@ public class ThemeService {
         return themeRepository.findAll().stream().map(themeMapper::toDto).toList();
     }
     @Transactional
-    public void updateTheme(Long id, ThemeUpdateRequest request) {
+    public ThemeDTO updateTheme(Long id, ThemeUpdateRequest request) {
         Theme th =  themeRepository.findById(id).orElseThrow(() -> new NotFoundException("Theme", id));
         th.setText(request.text());
-        themeRepository.save(th);
+        return themeMapper.toDto(themeRepository.save(th));
     }
     @Transactional
     public void deleteTheme(Long id) {
