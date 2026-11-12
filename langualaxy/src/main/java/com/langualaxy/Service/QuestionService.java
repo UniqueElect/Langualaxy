@@ -2,9 +2,13 @@ package com.langualaxy.Service;
 
 import com.langualaxy.Dtos.QuestionDTO;
 import com.langualaxy.Entity.Question;
+import com.langualaxy.Entity.Test;
 import com.langualaxy.Exceptions.NotFoundException;
 import com.langualaxy.Mappers.QuestionMapper;
 import com.langualaxy.Repository.QuestionRepository;
+import com.langualaxy.Repository.TestRepository;
+import com.langualaxy.Request.QuestionCreationRequest;
+import com.langualaxy.Request.QuestionUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,15 +17,21 @@ import java.util.List;
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
+    private final TestRepository testRepository;
     private final QuestionMapper questionMapper;
 
-    public QuestionService(QuestionMapper questionMapper, QuestionRepository questionRepository) {
+    public QuestionService(QuestionMapper questionMapper, QuestionRepository questionRepository, TestRepository testRepository) {
         this.questionMapper = questionMapper;
         this.questionRepository = questionRepository;
+        this.testRepository = testRepository;
     }
 
     @Transactional
-    public QuestionDTO createQuestion(Question question) {
+    public QuestionDTO createQuestion(QuestionCreationRequest request) {
+        Test test = testRepository.findById(request.testId())
+                .orElseThrow(() -> new NotFoundException("Test", request.testId()));
+        Question question = new Question(request.text());
+        test.addQuestion(question);
         return questionMapper.toDTO(questionRepository.save(question));
     }
 
@@ -37,11 +47,11 @@ public class QuestionService {
     }
 
     @Transactional
-    public QuestionDTO updateQuestion(Long questionId, Question updatedQuestion) {
+    public QuestionDTO updateQuestion(Long questionId, QuestionUpdateRequest request) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new NotFoundException("Question", questionId));
-        question.setText(updatedQuestion.getText());
-        return questionMapper.toDTO(questionRepository.save(question));
+        question.setText(request.text());
+        return questionMapper.toDTO(question);
     }
 
     @Transactional

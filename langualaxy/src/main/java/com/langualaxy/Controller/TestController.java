@@ -1,12 +1,12 @@
 package com.langualaxy.Controller;
 
 import com.langualaxy.Dtos.QuestionDTO;
+import com.langualaxy.Dtos.TestDTO;
 import com.langualaxy.Dtos.TestResult;
-import com.langualaxy.Entity.Test;
 import com.langualaxy.Request.TestCreationRequest;
 import com.langualaxy.Request.TestSubmitRequest;
+import com.langualaxy.Request.TestUpdateRequest;
 import com.langualaxy.Service.TestService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,30 +17,33 @@ import java.util.List;
 @RequestMapping("/api/tests")
 public class TestController {
 
-    @Autowired
-    private TestService testService;
+    private final TestService testService;
+
+    public TestController(TestService testService) {
+        this.testService = testService;
+    }
 
     @PostMapping("")
-    public ResponseEntity<Test> createTest(@RequestBody TestCreationRequest testCreationRequest) {
-        Test createdTest = testService.createTest(testCreationRequest);
+    public ResponseEntity<TestDTO> createTest(@RequestBody TestCreationRequest testCreationRequest) {
+        TestDTO createdTest = testService.createTest(testCreationRequest);
         return new ResponseEntity<>(createdTest, HttpStatus.CREATED);
     }
 
     @GetMapping("all")
-    public ResponseEntity<List<Test>> getAllTests() {
-        List<Test> tests = testService.getAllTests();
+    public ResponseEntity<List<TestDTO>> getAllTests() {
+        List<TestDTO> tests = testService.getAllTests();
         return new ResponseEntity<>(tests, HttpStatus.OK);
     }
 
     @GetMapping("get/{testId}")
-    public ResponseEntity<Test> getTestById(@PathVariable Long testId) {
-        Test test = testService.getTestById(testId);
+    public ResponseEntity<TestDTO> getTestById(@PathVariable Long testId) {
+        TestDTO test = testService.getTestById(testId);
         return new ResponseEntity<>(test, HttpStatus.OK);
     }
 
     @PostMapping("edit/{testId}")
-    public ResponseEntity<Test> updateTest(@PathVariable Long testId, @RequestBody Test updatedTest) {
-        Test test = testService.updateTest(testId, updatedTest);
+    public ResponseEntity<TestDTO> updateTest(@PathVariable Long testId, @RequestBody TestUpdateRequest request) {
+        TestDTO test = testService.updateTest(testId, request);
         return new ResponseEntity<>(test, HttpStatus.OK);
 
     }

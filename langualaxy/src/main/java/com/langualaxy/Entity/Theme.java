@@ -9,9 +9,14 @@ public class Theme {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String text;
 
+    public Theme(String text){
+        this.text = text;
+    }
+    public Theme() {
+    }
     public Long getId() {
         return id;
     }

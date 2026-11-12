@@ -1,10 +1,14 @@
 package com.langualaxy.Service;
 
 import com.langualaxy.Dtos.TestOptionDTO;
+import com.langualaxy.Entity.Question;
 import com.langualaxy.Entity.TestOption;
 import com.langualaxy.Exceptions.NotFoundException;
 import com.langualaxy.Mappers.TestOptionMapper;
+import com.langualaxy.Repository.QuestionRepository;
 import com.langualaxy.Repository.TestOptionRepository;
+import com.langualaxy.Request.OptionCreationRequest;
+import com.langualaxy.Request.OptionUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,15 +18,21 @@ import java.util.List;
 public class TestOptionService {
 
     private final TestOptionRepository testOptionRepository;
+    private final QuestionRepository questionRepository;
     private final TestOptionMapper testOptionMapper;
 
-    public TestOptionService(TestOptionMapper testOptionMapper, TestOptionRepository testOptionRepository) {
+    public TestOptionService(TestOptionMapper testOptionMapper, TestOptionRepository testOptionRepository, QuestionRepository questionRepository) {
         this.testOptionMapper = testOptionMapper;
         this.testOptionRepository = testOptionRepository;
+        this.questionRepository = questionRepository;
     }
 
     @Transactional
-    public TestOptionDTO createTestOption(TestOption testOption) {
+    public TestOptionDTO createTestOption(OptionCreationRequest request) {
+        Question question = questionRepository.findById(request.questionId())
+                .orElseThrow(() -> new NotFoundException("Question", request.questionId()));
+        TestOption testOption = new TestOption(request.text(), request.correct());
+        question.addOption(testOption);
         return testOptionMapper.toDTO(testOptionRepository.save(testOption));
     }
 
@@ -39,12 +49,12 @@ public class TestOptionService {
     }
 
     @Transactional
-    public TestOptionDTO updateTestOption(Long testOptionId, TestOption updatedTestOption) {
+    public TestOptionDTO updateTestOption(Long testOptionId, OptionUpdateRequest request) {
         TestOption testOption = testOptionRepository.findById(testOptionId)
                 .orElseThrow(() -> new NotFoundException("TestOption", testOptionId));
-        testOption.setText(updatedTestOption.getText());
-        testOption.setCorrect(updatedTestOption.isCorrect());
-        return testOptionMapper.toDTO(testOptionRepository.save(testOption));
+        testOption.setText(request.text());
+        testOption.setCorrect(request.correct());
+        return testOptionMapper.toDTO(testOption);
     }
 
     @Transactional

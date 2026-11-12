@@ -20,6 +20,7 @@ spring:
 
   # Hibernate ddl-auto(create, create-drop, validate, update)
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true

@@ -1,9 +1,9 @@
 package com.langualaxy.Controller;
 
 import com.langualaxy.Dtos.QuestionDTO;
-import com.langualaxy.Entity.Question;
+import com.langualaxy.Request.QuestionCreationRequest;
+import com.langualaxy.Request.QuestionUpdateRequest;
 import com.langualaxy.Service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,15 @@ import java.util.List;
 @RequestMapping("/api/questions")
 public class QuestionController {
 
-    @Autowired
-    private QuestionService questionService;
+    private final QuestionService questionService;
+
+    public QuestionController(QuestionService questionService) {
+        this.questionService = questionService;
+    }
 
     @PostMapping("")
-    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody Question question) {
-        QuestionDTO createdQuestion = questionService.createQuestion(question);
+    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionCreationRequest request) {
+        QuestionDTO createdQuestion = questionService.createQuestion(request);
         return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);
     }
 
@@ -36,8 +39,8 @@ public class QuestionController {
     }
 
     @PostMapping("edit/{questionId}")
-    public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @RequestBody Question updatedQuestion) {
-        QuestionDTO question = questionService.updateQuestion(questionId, updatedQuestion);
+    public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @RequestBody QuestionUpdateRequest request) {
+        QuestionDTO question = questionService.updateQuestion(questionId, request);
         return new ResponseEntity<>(question, HttpStatus.OK);
 
     }
