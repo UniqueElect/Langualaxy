@@ -41,27 +41,10 @@ public class TestService {
 
     @Transactional
     public TestDTO createTest(TestCreationRequest testCreationRequest) {
-        Test test = new Test();
-        test.setTitle(testCreationRequest.getName());
-
-        test = testRepository.save(test);
-
-        for (QuestionRequest questionRequest : testCreationRequest.getQuestions()) {
-            Question question = new Question();
-            question.setText(questionRequest.getText());
-            question.setTest(test);
-            question = questionRepository.save(question);
-
-            for (OptionRequest optionRequest : questionRequest.getOptions()) {
-                TestOption option = new TestOption();
-                option.setText(optionRequest.getText());
-                option.setCorrect(optionRequest.isCorrect());
-                option.setQuestion(question);
-                testOptionRepository.save(option);
-            }
-        }
-
-        return testMapper.toDto(test);
+        Test test = new Test(testCreationRequest.getName());
+        testCreationRequest.getQuestions()
+                .forEach(q -> test.addQuestion(questionMapper.toQuestion(q)));
+        return testMapper.toDto(testRepository.save(test));
     }
 
     @Transactional(readOnly = true)

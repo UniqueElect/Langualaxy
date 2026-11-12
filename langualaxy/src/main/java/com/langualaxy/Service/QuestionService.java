@@ -30,7 +30,8 @@ public class QuestionService {
     public QuestionDTO createQuestion(QuestionCreationRequest request) {
         Test test = testRepository.findById(request.testId())
                 .orElseThrow(() -> new NotFoundException("Test", request.testId()));
-        Question question = new Question(request.text(), test);
+        Question question = new Question(request.text());
+        test.addQuestion(question);
         return questionMapper.toDTO(questionRepository.save(question));
     }
 

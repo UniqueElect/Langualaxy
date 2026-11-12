@@ -16,9 +16,8 @@ import java.util.List;
 @Table(name = "questions")
 public class Question {
 
-    public Question(String text, Test test){
+    public Question(String text) {
         this.text = text;
-        this.test = test;
     }
 
     @Id
@@ -31,7 +30,11 @@ public class Question {
     @JoinColumn(name = "test_id")
     private Test test;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TestOption> options = new ArrayList<>();
 
+    public void addOption(TestOption option) {
+        options.add(option);
+        option.setQuestion(this);
+    }
 }

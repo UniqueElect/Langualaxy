@@ -31,7 +31,8 @@ public class TestOptionService {
     public TestOptionDTO createTestOption(OptionCreationRequest request) {
         Question question = questionRepository.findById(request.questionId())
                 .orElseThrow(() -> new NotFoundException("Question", request.questionId()));
-        TestOption testOption = new TestOption(request.text(), request.correct(), question);
+        TestOption testOption = new TestOption(request.text(), request.correct());
+        question.addOption(testOption);
         return testOptionMapper.toDTO(testOptionRepository.save(testOption));
     }
 
