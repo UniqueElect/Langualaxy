@@ -40,11 +40,8 @@ public class TestService {
     }
 
     @Transactional
-    public TestDTO createTest(TestCreationRequest testCreationRequest) {
-        Test test = new Test(testCreationRequest.getName());
-        testCreationRequest.getQuestions()
-                .forEach(q -> test.addQuestion(questionMapper.toQuestion(q)));
-        return testMapper.toDto(testRepository.save(test));
+    public TestDTO createTest(TestCreationRequest request) {
+        return testMapper.toDto(testRepository.save(testMapper.toTest(request)));
     }
 
     @Transactional(readOnly = true)
