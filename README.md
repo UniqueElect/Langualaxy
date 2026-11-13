@@ -7,6 +7,22 @@ A language-learning web app: learners take multiple-choice tests, practise vocab
 - **Backend:** REST API on Spring Boot (this README's main focus)
 - **Frontend:** Vue 3 single-page app
 
+## Features
+
+- **Tests.** Create a test with questions and answer options on the "Create test" page, or with a single API request. Each attempt draws up to 10 random questions, and answers are checked on the server, so correct answers never reach the browser.
+- **Flashcards.** Picture cards with a word, grouped by theme. Uploading a card with a new theme creates the theme automatically.
+- **Lessons.** Upload, download and rename study files.
+- **Themes.** Manage the themes that group flashcards.
+
+## Under the hood
+
+- **DTOs at the API boundary.** Responses are Java records, and create and update endpoints accept request DTOs instead of entities, so a client cannot set ids or relations directly.
+- **No N+1 queries.** Starting a test takes three SQL queries no matter how many questions it has: an existence check, the questions, and all their answer options in one batch.
+- **Persistence settings.** All `@ManyToOne` associations are lazy, `open-in-view` is disabled, and every service method runs in a transaction (read-only for queries). Deleting a test cascades to its questions and answer options.
+- **Light file list.** The lessons list loads only file metadata through a JPQL constructor expression; file contents are read only on download.
+- **Consistent errors.** A global `@RestControllerAdvice` returns Problem Details JSON, so a missing resource is a clear 404 instead of an empty response.
+- **Constructor injection** throughout, with no field `@Autowired`.
+
 ## Tech stack
 
 | Layer | Technologies |
@@ -15,23 +31,19 @@ A language-learning web app: learners take multiple-choice tests, practise vocab
 | Database | MariaDB |
 | Frontend | Vue 3, Vue Router, Bootstrap 5 |
 
-## Features
-
-- **Tests.** Create a complete test with questions and answer options in a single request. Each attempt draws up to 10 random questions from the test.
-- **Flashcards.** Picture cards with a word, grouped by theme. Uploading a card with a new theme creates the theme automatically.
-- **Lessons.** Upload, download and rename study files.
-- **Themes.** Manage the themes that group flashcards.
-
 ## Project structure
 
 ```
 langualaxy/            Spring Boot backend
   src/main/java/com/langualaxy/
     Controller/        REST controllers
-    Service/           business logic
+    Service/           business logic and transactions
     Repository/        Spring Data JPA repositories
     Entity/            JPA entities
     Dtos/, Request/    response and request models
+    Mappers/           entity <-> DTO mapping
+    Exceptions/        NotFoundException and the global error handler
+    Configuration/     CORS and security setup
 langualaxy front/      Vue 3 frontend
 ```
 
@@ -58,7 +70,7 @@ docker run --name langualaxy-db \
 
 ```bash
 cd langualaxy
-cp .env.example .env    # then fill in the values
+cp .env.example .env    # then fill in DB_URL and DB_PASSWORD
 ./mvnw spring-boot:run  # on Windows: mvnw.cmd spring-boot:run
 ```
 
@@ -67,7 +79,7 @@ cp .env.example .env    # then fill in the values
 | `DB_URL` | `jdbc:mariadb://localhost:3306/langualaxy?useUnicode=true&characterEncoding=utf8` |
 | `DB_PASSWORD` | the root password you set for MariaDB |
 
-The API starts on `http://localhost:8080`. Tables are created automatically on first run.
+The other variables in `.env.example` are reserved for authentication, which is not enabled yet. The API starts on `http://localhost:8080`, and tables are created automatically on first run.
 
 ### 3. Run the frontend
 
@@ -79,13 +91,34 @@ npm run serve
 
 Start the backend first: the Vue dev server then runs on `http://localhost:8081`, which is the origin the backend allows for CORS.
 
+### 4. Add a test
+
+Open `http://localhost:8081/tests` and click **Create test**. Or send the same data straight to the API:
+
+```bash
+curl -X POST http://localhost:8080/api/tests \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Present Simple",
+        "questions": [
+          {
+            "text": "She ___ to school every day.",
+            "options": [
+              { "text": "go", "correct": false },
+              { "text": "goes", "correct": true }
+            ]
+          }
+        ]
+      }'
+```
+
 ## API overview
 
-| Resource | Base path | Notes |
+| Resource | Base path | Notable endpoints |
 | --- | --- | --- |
-| Tests | `/api/tests` | `GET /api/tests/{id}/start` returns up to 10 random questions |
-| Questions | `/api/questions` | |
-| Answer options | `/api/test-options` | `GET /api/test-options/question/{questionId}` |
-| Flashcards | `/api/flashcards` | created via multipart upload: theme, word, image |
+| Tests | `/api/tests` | `POST /api/tests` creates a test with its questions and options; `GET /{id}/start` returns up to 10 random questions without correct answers; `POST /{id}/submit` checks the answers and returns the ids of correctly answered questions |
+| Questions | `/api/questions` | create, read and update single questions |
+| Answer options | `/api/test-options` | `GET /question/{questionId}` lists the options of a question |
+| Flashcards | `/api/flashcards` | `POST /create` is a multipart upload of theme, word and image; `GET /get/{themeId}` lists the cards of a theme |
 | Themes | `/api/themes` | |
-| Files | `/api/files` | multipart upload, download by id |
+| Files | `/api/files` | `POST /upload` is a multipart upload; `GET /all` returns metadata only; `GET /{id}` downloads a file |
