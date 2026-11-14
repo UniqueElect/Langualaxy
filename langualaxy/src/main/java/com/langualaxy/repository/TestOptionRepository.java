@@ -1,0 +1,12 @@
+package com.langualaxy.repository;
+
+import com.langualaxy.entity.TestOption;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface TestOptionRepository extends JpaRepository<TestOption, Long> {
+    List<TestOption> findByQuestionId(Long questionId);
+    List<TestOption> findByQuestionIdIn(List<Long> questionIds);
+    List<TestOption> findByQuestionTestIdAndCorrectTrue(Long testId);
+}
