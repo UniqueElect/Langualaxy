@@ -36,14 +36,14 @@ A language-learning web app: learners take multiple-choice tests, practise vocab
 ```
 langualaxy/            Spring Boot backend
   src/main/java/com/langualaxy/
-    Controller/        REST controllers
-    Service/           business logic and transactions
-    Repository/        Spring Data JPA repositories
-    Entity/            JPA entities
-    Dtos/, Request/    response and request models
-    Mappers/           entity <-> DTO mapping
-    Exceptions/        NotFoundException and the global error handler
-    Configuration/     CORS and security setup
+    controller/        REST controllers
+    service/           business logic and transactions
+    repository/        Spring Data JPA repositories
+    entity/            JPA entities
+    dto/, request/     response and request models
+    mapper/            entity <-> DTO mapping
+    exception/         NotFoundException and the global error handler
+    config/            CORS and security setup
 langualaxy front/      Vue 3 frontend
 ```
 

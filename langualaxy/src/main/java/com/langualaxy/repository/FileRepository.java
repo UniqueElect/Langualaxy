@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
-    @Query("select new com.langualaxy.Dtos.FileDTO (f.id, f.fileName) from FileEntity f")
+    @Query("select new com.langualaxy.dto.FileDTO (f.id, f.fileName) from FileEntity f")
     List<FileDTO> selectAllWithoutData();
 }
 
