@@ -11,6 +11,7 @@ import Games from '@/views/GamesPage.vue'
 import NotFound from '@/components/NotFound.vue';
 import Flashcard from '@/components/FlashcardItem.vue'
 import Login from '@/views/LoginPage.vue'
+import CreateTest from '@/views/CreateTestPage.vue'
 const routes = [
   {
     path: '/',
@@ -21,6 +22,11 @@ const routes = [
     path: '/tests',
     name: 'Tests',
     component: Tests
+  },
+  {
+    path: '/tests/create',
+    name: 'CreateTest',
+    component: CreateTest
   },
   {
     path: '/lessons',

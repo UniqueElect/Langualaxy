@@ -3,6 +3,7 @@
     <div class="lgx-container">
       <div class="container py-5">
       <h1 class="topic">English tests</h1>
+      <router-link to="/tests/create" id="create-test" class="btn">+ Create test</router-link>
       <div id="delimetr"></div>
       <ul>
         <li v-for="test in tests" :key="test.id" @click="startTest(test.id)">
@@ -62,6 +63,16 @@
     }
     .topic{
         color: #CDFF03;
+    }
+    #create-test{
+        margin-top: 10px;
+        border: none;
+        color: white;
+        font-family: 'Patua One', sans-serif;
+        background-color: #5930FF;
+    }
+    #create-test:hover{
+        outline: white 1px solid;
     }
     li:hover{
       color: white;
