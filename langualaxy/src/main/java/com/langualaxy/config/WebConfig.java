@@ -1,4 +1,4 @@
-package com.langualaxy.Configuration;
+package com.langualaxy.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
