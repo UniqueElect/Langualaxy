@@ -7,6 +7,7 @@ import com.langualaxy.request.TestCreationRequest;
 import com.langualaxy.request.TestSubmitRequest;
 import com.langualaxy.request.TestUpdateRequest;
 import com.langualaxy.service.TestService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class TestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<TestDTO> createTest(@RequestBody TestCreationRequest testCreationRequest) {
+    public ResponseEntity<TestDTO> createTest(@Valid @RequestBody TestCreationRequest testCreationRequest) {
         TestDTO createdTest = testService.createTest(testCreationRequest);
         return new ResponseEntity<>(createdTest, HttpStatus.CREATED);
     }
@@ -42,7 +43,7 @@ public class TestController {
     }
 
     @PostMapping("edit/{testId}")
-    public ResponseEntity<TestDTO> updateTest(@PathVariable Long testId, @RequestBody TestUpdateRequest request) {
+    public ResponseEntity<TestDTO> updateTest(@PathVariable Long testId, @Valid @RequestBody TestUpdateRequest request) {
         TestDTO test = testService.updateTest(testId, request);
         return new ResponseEntity<>(test, HttpStatus.OK);
 
@@ -61,7 +62,7 @@ public class TestController {
     }
 
     @PostMapping("/{testId}/submit")
-    public ResponseEntity<TestResult> submitTest(@PathVariable Long testId, @RequestBody TestSubmitRequest answers) {
+    public ResponseEntity<TestResult> submitTest(@PathVariable Long testId, @Valid @RequestBody TestSubmitRequest answers) {
         TestResult testResult = testService.submitTest(testId, answers);
         return new ResponseEntity<>(testResult, HttpStatus.OK);
     }

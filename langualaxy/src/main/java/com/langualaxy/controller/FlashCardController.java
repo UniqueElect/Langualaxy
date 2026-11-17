@@ -3,6 +3,7 @@ package com.langualaxy.controller;
 import com.langualaxy.dto.FlashCardDTO;
 import com.langualaxy.request.FlashCardUpdateRequest;
 import com.langualaxy.service.FlashCardService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class FlashCardController {
     }
 
     @PostMapping("edit/{id}")
-    public FlashCardDTO updateFlashCard(@PathVariable Long id, @RequestBody FlashCardUpdateRequest request) {
+    public FlashCardDTO updateFlashCard(@PathVariable Long id, @Valid @RequestBody FlashCardUpdateRequest request) {
         return flashCardService.updateFlashCard(id, request);
     }
 

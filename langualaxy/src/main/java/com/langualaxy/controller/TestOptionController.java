@@ -4,6 +4,7 @@ import com.langualaxy.dto.TestOptionDTO;
 import com.langualaxy.request.OptionCreationRequest;
 import com.langualaxy.request.OptionUpdateRequest;
 import com.langualaxy.service.TestOptionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class TestOptionController {
     }
 
     @PostMapping("")
-    public ResponseEntity<TestOptionDTO> createTestOption(@RequestBody OptionCreationRequest request) {
+    public ResponseEntity<TestOptionDTO> createTestOption(@Valid @RequestBody OptionCreationRequest request) {
         TestOptionDTO createdTestOption = testOptionService.createTestOption(request);
         return new ResponseEntity<>(createdTestOption, HttpStatus.CREATED);
     }
@@ -40,7 +41,7 @@ public class TestOptionController {
 
     @PostMapping("edit/{testOptionId}")
     public ResponseEntity<TestOptionDTO> updateTestOption(@PathVariable Long testOptionId
-            , @RequestBody OptionUpdateRequest request) {
+            , @Valid @RequestBody OptionUpdateRequest request) {
         TestOptionDTO testOption = testOptionService.updateTestOption(testOptionId, request);
         return new ResponseEntity<>(testOption, HttpStatus.OK);
 

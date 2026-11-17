@@ -1,4 +1,6 @@
 package com.langualaxy.request;
 
-public record ThemeCreationRequest(String text) {
+import jakarta.validation.constraints.NotBlank;
+
+public record ThemeCreationRequest(@NotBlank String text) {
 }

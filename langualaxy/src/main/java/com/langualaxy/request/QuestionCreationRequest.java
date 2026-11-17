@@ -1,5 +1,8 @@
 package com.langualaxy.request;
 
-public record QuestionCreationRequest(String text, Long testId) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record QuestionCreationRequest(@NotBlank String text, @NotNull Long testId) {
 
 }

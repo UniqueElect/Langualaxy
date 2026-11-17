@@ -4,6 +4,7 @@ import com.langualaxy.dto.QuestionDTO;
 import com.langualaxy.request.QuestionCreationRequest;
 import com.langualaxy.request.QuestionUpdateRequest;
 import com.langualaxy.service.QuestionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class QuestionController {
     }
 
     @PostMapping("")
-    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionCreationRequest request) {
+    public ResponseEntity<QuestionDTO> createQuestion(@Valid @RequestBody QuestionCreationRequest request) {
         QuestionDTO createdQuestion = questionService.createQuestion(request);
         return new ResponseEntity<>(createdQuestion, HttpStatus.CREATED);
     }
@@ -39,7 +40,7 @@ public class QuestionController {
     }
 
     @PostMapping("edit/{questionId}")
-    public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @RequestBody QuestionUpdateRequest request) {
+    public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable Long questionId, @Valid @RequestBody QuestionUpdateRequest request) {
         QuestionDTO question = questionService.updateQuestion(questionId, request);
         return new ResponseEntity<>(question, HttpStatus.OK);
 
