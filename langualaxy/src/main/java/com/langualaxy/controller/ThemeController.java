@@ -4,6 +4,7 @@ import com.langualaxy.dto.ThemeDTO;
 import com.langualaxy.request.ThemeCreationRequest;
 import com.langualaxy.request.ThemeUpdateRequest;
 import com.langualaxy.service.ThemeService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ThemeController {
     }
 
     @PostMapping
-    public ThemeDTO createTheme(@RequestBody ThemeCreationRequest request) {
+    public ThemeDTO createTheme(@Valid @RequestBody ThemeCreationRequest request) {
         return themeService.createTheme(request);
     }
 
@@ -34,7 +35,7 @@ public class ThemeController {
     }
 
     @PostMapping("/edit/{id}")
-    public ThemeDTO updateTheme(@PathVariable Long id, @RequestBody ThemeUpdateRequest request) {
+    public ThemeDTO updateTheme(@PathVariable Long id, @Valid @RequestBody ThemeUpdateRequest request) {
         return themeService.updateTheme(id, request);
     }
 

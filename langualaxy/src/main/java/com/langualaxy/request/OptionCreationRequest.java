@@ -1,4 +1,7 @@
 package com.langualaxy.request;
 
-public record OptionCreationRequest(String text, boolean correct, Long questionId) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record OptionCreationRequest(@NotBlank String text, @NotNull boolean correct, @NotNull Long questionId) {
 }

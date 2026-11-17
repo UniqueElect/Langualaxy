@@ -1,4 +1,6 @@
 package com.langualaxy.request;
 
-public record QuestionUpdateRequest(String text) {
+import jakarta.validation.constraints.NotBlank;
+
+public record QuestionUpdateRequest(@NotBlank String text) {
 }

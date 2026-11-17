@@ -1,4 +1,7 @@
 package com.langualaxy.request;
 
-public record OptionUpdateRequest(String text, boolean correct) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record OptionUpdateRequest(@NotBlank String text, @NotNull boolean correct) {
 }
