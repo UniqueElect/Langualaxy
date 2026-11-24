@@ -32,4 +32,7 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
 
+langualaxy:
+  tests:
+    questions-per-attempt=10:
 

@@ -1,5 +1,6 @@
 package com.langualaxy.controller;
 
+import com.langualaxy.config.TestProperties;
 import com.langualaxy.dto.QuestionDTO;
 import com.langualaxy.dto.TestDTO;
 import com.langualaxy.dto.TestResult;
@@ -19,9 +20,11 @@ import java.util.List;
 public class TestController {
 
     private final TestService testService;
+    private final TestProperties testProperties;
 
-    public TestController(TestService testService) {
+    public TestController(TestService testService, TestProperties testProperties) {
         this.testService = testService;
+        this.testProperties = testProperties;
     }
 
     @PostMapping("")
@@ -57,7 +60,7 @@ public class TestController {
 
     @GetMapping("/{testId}/start")
     public ResponseEntity<List<QuestionDTO>> startTest(@PathVariable Long testId) {
-        List<QuestionDTO> selectedQuestions = testService.startTest(testId, 10);
+        List<QuestionDTO> selectedQuestions = testService.startTest(testId, testProperties.questionsPerAttempt());
         return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
     }
 
