@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 public class OptionRequest {
     @NotBlank
     private String text;
-    @NotNull
     private boolean correct;
     public String getText() {
         return text;
