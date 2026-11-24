@@ -34,5 +34,5 @@ spring:
 
 langualaxy:
   tests:
-    questions-per-attempt=10:
+    questions-per-attempt: 10
 
