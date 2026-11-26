@@ -9,7 +9,7 @@ A language-learning web app: learners take multiple-choice tests, practise vocab
 
 ## Features
 
-- **Tests.** Create a test with questions and answer options on the "Create test" page, or with a single API request. Each attempt draws up to 10 random questions, and answers are checked on the server, so correct answers never reach the browser.
+- **Tests.** Create a test with questions and answer options on the "Create test" page, or with a single API request. Each attempt draws up to 10 random questions (configurable via `langualaxy.tests.questions-per-attempt`), and answers are checked on the server, so correct answers never reach the browser.
 - **Flashcards.** Picture cards with a word, grouped by theme. Uploading a card with a new theme creates the theme automatically.
 - **Lessons.** Upload, download and rename study files.
 - **Themes.** Manage the themes that group flashcards.
@@ -43,7 +43,7 @@ langualaxy/            Spring Boot backend
     dto/, request/     response and request models
     mapper/            entity <-> DTO mapping
     exception/         NotFoundException and the global error handler
-    config/            CORS and security setup
+    config/            CORS and configuration properties
 langualaxy front/      Vue 3 frontend
 ```
 

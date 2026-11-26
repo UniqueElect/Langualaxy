@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
-@ConfigurationPropertiesScan()
+@ConfigurationPropertiesScan
 public class LangualaxyApplication {
 
 	public static void main(String[] args) {
